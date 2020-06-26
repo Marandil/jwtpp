@@ -1,13 +1,17 @@
-# jwtpp
+# jwtpp-json
 JSON Object Signing and Encryption library for C++
 
+This fork of [jwtpp](https://github.com/troian/jwtpp) substitutes [jsoncpp](https://github.com/open-source-parsers/jsoncpp) for [JSON for Modern C++](https://github.com/nlohmann/json). Thanks to minimal differences on the APIs used by jwtpp, the changes to the core are minimal.
+
+<!--
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/da9665fd01ba4c759cef755d1ff03d2c)](https://www.codacy.com/app/troian/jwtpp?utm_source=github.com&utm_medium=referral&utm_content=troian/jwtpp&utm_campaign=badger)
 [![Build Status](https://travis-ci.com/troian/jwtpp.svg?branch=master)](https://travis-ci.com/troian/jwtpp)
 [![Codecov](https://codecov.io/gh/troian/jwtpp/branch/master/graph/badge.svg)](https://codecov.io/gh/troian/jwtpp)
 <a href="https://jwt.io"> <img src="https://jwt.io/img/badge-compatible.svg?sanitize=true" width="80"/></a>
+-->
 
 #### Dependencies:
-  - [jsoncpp](https://github.com/open-source-parsers/jsoncpp)
+  - [JSON for Modern C++](https://github.com/nlohmann/json)
   - OpenSSL
 
 #### Built and tested with:

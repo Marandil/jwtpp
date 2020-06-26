@@ -34,7 +34,7 @@ void claims::set::any(const std::string &key, const std::string &value) {
 }
 
 claims::claims()
-	: _claims()
+	: _claims({})
 	, _set(&_claims)
 	, _get(&_claims)
 	, _has(&_claims)

@@ -26,27 +26,23 @@
 
 namespace jwtpp {
 
-std::string marshal(const Json::Value &json) {
-	Json::StreamWriterBuilder builder;
-	builder["commentStyle"] = "None";
-	builder["indentation"] = ""; // Write in one line
-	std::string out = Json::writeString(builder, json);
+std::string marshal(const nlohmann::json &json) {
+	std::string out = json.dump();
 	return out;
 }
 
-std::string marshal_b64(const Json::Value &json) {
+std::string marshal_b64(const nlohmann::json &json) {
 	std::string s = marshal(json);
 	return b64::encode_uri(s);
 }
 
-Json::Value unmarshal(const std::string &in) {
-	Json::Value j;
+nlohmann::json unmarshal(const std::string &in) {
+	nlohmann::json j;
 	std::stringstream(in) >> j;
-
 	return j;
 }
 
-Json::Value unmarshal_b64(const std::string &b64) {
+nlohmann::json unmarshal_b64(const std::string &b64) {
 	std::string decoded;
 	decoded = b64::decode(b64);
 	return unmarshal(decoded);

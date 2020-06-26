@@ -22,13 +22,15 @@
 
 #pragma once
 
+#include <iostream> // TODO: REMOVE
+
 #include <memory>
 #include <functional>
 #include <vector>
 #include <string>
 #include <sstream>
 
-#include <json/json.h>
+#include <nlohmann/json.hpp>
 
 #include <openssl/crypto.h>
 #include <openssl/ossl_typ.h>
@@ -220,12 +222,14 @@ private:
 * \brief
 */
 class claims final {
+	using json = nlohmann::json;
+
 private:
 	class has {
 	public:
-		explicit has(Json::Value *c) : _claims(c) {}
+		explicit has(json *c) : _claims(c) {}
 	public:
-		bool any(const std::string &key) { return _claims->isMember(key); }
+		bool any(const std::string &key) { return _claims->contains(key); }
 		bool iss() { return any("iss"); }
 		bool sub() { return any("sub"); }
 		bool aud() { return any("aud"); }
@@ -234,16 +238,16 @@ private:
 		bool iat() { return any("iat"); }
 		bool jti() { return any("jti"); }
 	private:
-		Json::Value *_claims;
+		json *_claims;
 	};
 
 	class check {
 	public:
-		explicit check(Json::Value *c) : _claims(c) {}
+		explicit check(json *c) : _claims(c) {}
 	public:
 		bool any(const std::string &key, const std::string &value) {
-			std::string s = _claims->operator[](key).asString();
-			return s == value;
+			auto it = _claims->find(key);
+			return it != _claims->end() && *it == value;
 		}
 		bool iss(const std::string &value) { return any("iss", value); }
 		bool sub(const std::string &value) { return any("sub", value); }
@@ -253,14 +257,14 @@ private:
 		bool iat(const std::string &value) { return any("iat", value); }
 		bool jti(const std::string &value) { return any("jti", value); }
 	private:
-		Json::Value *_claims;
+		json *_claims;
 	};
 
 	class del {
 	public:
-		explicit del(Json::Value *c) : _claims(c) {}
+		explicit del(json *c) : _claims(c) {}
 	public:
-		void any(const std::string &key) { _claims->removeMember(key); }
+		void any(const std::string &key) { _claims->erase(key); }
 		void iss() { any("iss"); }
 		void sub() { any("sub"); }
 		void aud() { any("aud"); }
@@ -269,16 +273,16 @@ private:
 		void iat() { any("nbf"); }
 		void jti() { any("jti"); }
 	private:
-		Json::Value *_claims;
+		json *_claims;
 	};
 
 
 	class get {
 	public:
-		explicit get(Json::Value *c) : _claims(c) {}
+		explicit get(json *c) : _claims(c) {}
 	public:
 		std::string any(const std::string &key) {
-			return _claims->operator[](key).asString();
+			return _claims->operator[](key);
 		}
 		std::string iss() { return any("iss"); }
 		std::string sub() { return any("sub"); }
@@ -288,12 +292,12 @@ private:
 		std::string iat() { return any("iat"); }
 		std::string jti() { return any("jti"); }
 	private:
-		Json::Value *_claims;
+		json *_claims;
 	};
 
 	class set {
 	public:
-		explicit set(Json::Value *c) : _claims(c) {}
+		explicit set(json *c) : _claims(c) {}
 	public:
 		void any(const std::string &key, const std::string &value);
 		void iss(const std::string &value) { any("iss", value); }
@@ -305,7 +309,7 @@ private:
 		void jti(const std::string &value) { any("jti", value); }
 
 	private:
-		Json::Value *_claims;
+		json *_claims;
 	};
 public:
 	/**
@@ -370,7 +374,7 @@ public:
 #endif // !(defined(_MSC_VER) && (_MSC_VER < 1700))
 
 private:
-	Json::Value _claims;
+	json _claims;
 
 	class set   _set;
 	class get   _get;
@@ -380,6 +384,8 @@ private:
 };
 
 class hdr final {
+	using json = nlohmann::json;
+	
 public:
 	explicit hdr(jwtpp::alg_t alg);
 
@@ -388,7 +394,7 @@ public:
 	std::string b64();
 
 private:
-	Json::Value _h;
+	json _h;
 };
 
 /**
@@ -486,6 +492,8 @@ private:
 };
 
 class crypto {
+	using json = nlohmann::json;
+
 public:
 	using password_cb = std::function<void(secure_string &pass, int rwflag)>;
 
@@ -559,7 +567,7 @@ protected:
 
 protected:
 	alg_t          _alg;
-	Json::Value    _hdr;
+	json           _hdr;
 	digest::type   _hash_type;
 };
 
@@ -689,13 +697,13 @@ private:
 	size_t     _key_size;
 };
 
-std::string marshal(const Json::Value &json);
+std::string marshal(const nlohmann::json &json);
 
-std::string marshal_b64(const Json::Value &json);
+std::string marshal_b64(const nlohmann::json &json);
 
-Json::Value unmarshal(const std::string &in);
+nlohmann::json unmarshal(const std::string &in);
 
-Json::Value unmarshal_b64(const std::string &b);
+nlohmann::json unmarshal_b64(const std::string &b);
 
 #if defined(_MSC_VER) && (_MSC_VER < 1700)
 #   undef final

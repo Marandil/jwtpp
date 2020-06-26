@@ -10,6 +10,7 @@ option(JWTPP_WITH_TESTS "Build tests" OFF)
 option(JWTPP_WITH_COVERAGE "Enable coverage tests" OFF)
 option(JWTPP_WITH_INSTALL "Allow root targets to not issue install" ON)
 option(JWTPP_WITH_SHARED_LIBS "Build shared library" OFF)
+option(JWTT_USE_EXTERNAL_JSON "Use an external JSON library" OFF)
 
 if(JWTPP_WITH_TESTS AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
 	include(CodeCoverage)
@@ -30,15 +31,24 @@ set(INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "Installation d
 set(INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_PREFIX}/share/pkgconfig" CACHE PATH "Installation directory for pkgconfig (.pc) files")
 
 find_package(OpenSSL REQUIRED)
+if(JWTPP_USE_EXTERNAL_JSON)
+  find_package(nlohmann_json 3.2.0 REQUIRED)
+else()
+  set(JSON_BuildTests OFF CACHE INTERNAL "")
+  include(FetchContent)
 
-if (NOT WIN32 AND NOT JsonCPP_FOUND)
-	find_package(PkgConfig REQUIRED)
-	pkg_check_modules(JsonCPP REQUIRED jsoncpp)
-endif ()
+  FetchContent_Declare(json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.7.3)
+
+  FetchContent_GetProperties(json)
+  if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+  endif()
+endif()
 
 include_directories(SYSTEM ${OPENSSL_INCLUDE_DIR})
-include_directories(SYSTEM ${JsonCPP_INCLUDE_DIRS})
-link_directories(${JsonCPP_LIBRARY_DIRS})
 
 check_include_file_cxx(memory HAVE_MEMORY)
 check_include_file_cxx(functional HAVE_FUNCTIONAL)
@@ -89,7 +99,6 @@ target_include_directories(
 	${PROJECT_NAME}-static
 	PUBLIC
 		include/export
-		${JsonCPP_INCLUDE_DIRS}
 	PRIVATE
 		include/local
 )
@@ -97,7 +106,7 @@ target_include_directories(
 target_link_libraries(
 	${PROJECT_NAME}-static
 	${OPENSSL_LIBRARIES}
-	${JsonCPP_LIBRARIES}
+	nlohmann_json::nlohmann_json
 )
 
 if (JWTPP_WITH_INSTALL)
@@ -119,7 +128,6 @@ if (JWTPP_WITH_SHARED_LIBS)
 		${PROJECT_NAME}-shared
 		PUBLIC
 			include/export
-			${JsonCPP_INCLUDE_DIRS}
 		PRIVATE
 			include/local
 	)
@@ -128,7 +136,7 @@ if (JWTPP_WITH_SHARED_LIBS)
 		${PROJECT_NAME}-shared
 		PUBLIC
 			${OPENSSL_LIBRARIES}
-			${JsonCPP_LIBRARIES}
+			nlohmann_json::nlohmann_json
 	)
 
 	if (WITH_INSTALL)

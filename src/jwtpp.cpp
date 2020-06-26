@@ -75,7 +75,7 @@ sp_jws jws::parse(const std::string &full_bearer) {
 		throw std::runtime_error("Bearer is invalid");
 	}
 
-	Json::Value hdr;
+	nlohmann::json hdr;
 
 	try {
 		hdr = unmarshal_b64(tokens[0]);
@@ -83,15 +83,15 @@ sp_jws jws::parse(const std::string &full_bearer) {
 		throw;
 	}
 
-	if (!hdr.isMember("typ") || !hdr.isMember("alg")) {
+	if (!hdr.contains("typ") || !hdr.contains("alg")) {
 		throw std::runtime_error("Invalid JWT header");
 	}
 
-	if (hdr["typ"].asString() != "JWT") {
+	if (hdr["typ"] != "JWT") {
 		throw std::runtime_error("Is not JWT");
 	}
 
-	alg_t a = crypto::str2alg(hdr["alg"].asString());
+	alg_t a = crypto::str2alg(hdr["alg"]);
 	if (a >= alg_t::UNKNOWN) {
 		throw std::runtime_error("Invalid alg");
 	}

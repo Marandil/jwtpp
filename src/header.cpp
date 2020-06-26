@@ -36,19 +36,19 @@ hdr::hdr(const std::string &data)
 {
 	std::stringstream(data) >> _h;
 
-	if (!_h.isMember("typ") || !_h["typ"].isString()) {
+	if (!_h.contains("typ") || !_h["typ"].is_string()) {
 		throw std::runtime_error("stream does not have valid \"typ\" field");
 	}
 
-	if (_h["typ"].asString() != "JWT") {
+	if (_h["typ"] != "JWT") {
 		throw std::runtime_error("invalid \"typ\" value");
 	}
 
-	if (!_h.isMember("alg") || !_h["alg"].isString()) {
+	if (!_h.contains("alg") || !_h["alg"].is_string()) {
 		throw std::runtime_error("stream does not have valid \"alg\" field");
 	}
 
-	if (crypto::str2alg(_h["alg"].asString()) == alg_t::UNKNOWN) {
+	if (crypto::str2alg(_h["alg"]) == alg_t::UNKNOWN) {
 		throw std::runtime_error("invalid \"alg\" value");
 	}
 }
