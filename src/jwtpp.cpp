@@ -54,22 +54,9 @@ bool jws::verify(sp_crypto c, verify_cb v) {
 	return true;
 }
 
-sp_jws jws::parse(const std::string &full_bearer) {
-	if (full_bearer.empty() || full_bearer.length() < bearer_hdr.length()) {
-		throw std::invalid_argument("Bearer is invalid or empty");
-	}
-
-	for (size_t i = 0; i < bearer_hdr.length(); i++) {
-
-		if (bearer_hdr[i] != tolower(full_bearer[i])) {
-			throw std::invalid_argument("Bearer header is invalid");
-		}
-	}
-
-	std::string bearer = full_bearer.substr(bearer_hdr.length());
-
+sp_jws jws::parse_token(const std::string &full_token) {
 	std::vector<std::string> tokens;
-	tokens = tokenize(bearer, '.');
+	tokens = tokenize(full_token, '.');
 
 	if (tokens.size() != 3) {
 		throw std::runtime_error("Bearer is invalid");
@@ -117,6 +104,23 @@ sp_jws jws::parse(const std::string &full_bearer) {
 	}
 
 	return sp_jws(j);
+}
+
+sp_jws jws::parse_bearer(const std::string &full_bearer) {
+	if (full_bearer.empty() || full_bearer.length() < bearer_hdr.length()) {
+		throw std::invalid_argument("Bearer is invalid or empty");
+	}
+
+	for (size_t i = 0; i < bearer_hdr.length(); i++) {
+
+		if (bearer_hdr[i] != tolower(full_bearer[i])) {
+			throw std::invalid_argument("Bearer header is invalid");
+		}
+	}
+
+	std::string bearer = full_bearer.substr(bearer_hdr.length());
+
+    return parse_token(bearer);
 }
 
 std::string jws::sign(const std::string &data, sp_crypto c) {

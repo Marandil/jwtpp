@@ -58,12 +58,15 @@ TEST(jwtpp, sign_verify_ecdsa256) {
 	EXPECT_NO_THROW(e512_pub = std::make_shared<jwtpp::ecdsa>(pubkey, jwtpp::alg_t::ES256));
 
 	std::string bearer = jwtpp::jws::sign_bearer(cl, e256);
+	std::string token = jwtpp::jws::sign_claims(cl, e256);
 
 	EXPECT_TRUE(!bearer.empty());
 
 	jwtpp::sp_jws jws;
 
 	EXPECT_NO_THROW(jws = jwtpp::jws::parse(bearer));
+	EXPECT_NO_THROW(jws = jwtpp::jws::parse_bearer(bearer));
+	EXPECT_NO_THROW(jws = jwtpp::jws::parse_token(token));
 
 	EXPECT_TRUE(jws->verify(e256_pub));
 

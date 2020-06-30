@@ -459,7 +459,11 @@ public:
 	 *
 	 * \return
 	 */
-	static sp_jws parse(const std::string &b);
+	static sp_jws parse(const std::string &b) { return parse_bearer(b); }
+
+	static sp_jws parse_token(const std::string &full_token);
+
+	static sp_jws parse_bearer(const std::string &full_bearer);
 
 	/**
 	 * \brief Sign content and return signature
