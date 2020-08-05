@@ -245,17 +245,17 @@ private:
 	public:
 		explicit check(json *c) : _claims(c) {}
 	public:
-		bool any(const std::string &key, const std::string &value) {
+		bool any(const std::string &key, const nlohmann::json &value) {
 			auto it = _claims->find(key);
 			return it != _claims->end() && *it == value;
 		}
-		bool iss(const std::string &value) { return any("iss", value); }
-		bool sub(const std::string &value) { return any("sub", value); }
-		bool aud(const std::string &value) { return any("aud", value); }
-		bool exp(const std::string &value) { return any("exp", value); }
-		bool nbf(const std::string &value) { return any("nbf", value); }
-		bool iat(const std::string &value) { return any("iat", value); }
-		bool jti(const std::string &value) { return any("jti", value); }
+		bool iss(const nlohmann::json &value) { return any("iss", value); }
+		bool sub(const nlohmann::json &value) { return any("sub", value); }
+		bool aud(const nlohmann::json &value) { return any("aud", value); }
+		bool exp(const nlohmann::json &value) { return any("exp", value); }
+		bool nbf(const nlohmann::json &value) { return any("nbf", value); }
+		bool iat(const nlohmann::json &value) { return any("iat", value); }
+		bool jti(const nlohmann::json &value) { return any("jti", value); }
 	private:
 		json *_claims;
 	};
@@ -281,16 +281,16 @@ private:
 	public:
 		explicit get(json *c) : _claims(c) {}
 	public:
-		std::string any(const std::string &key) {
+		nlohmann::json& any(const std::string &key) {
 			return _claims->operator[](key);
 		}
-		std::string iss() { return any("iss"); }
-		std::string sub() { return any("sub"); }
-		std::string aud() { return any("aud"); }
-		std::string exp() { return any("exp"); }
-		std::string nbf() { return any("nbf"); }
-		std::string iat() { return any("iat"); }
-		std::string jti() { return any("jti"); }
+		nlohmann::json& iss() { return any("iss"); }
+		nlohmann::json& sub() { return any("sub"); }
+		nlohmann::json& aud() { return any("aud"); }
+		nlohmann::json& exp() { return any("exp"); }
+		nlohmann::json& nbf() { return any("nbf"); }
+		nlohmann::json& iat() { return any("iat"); }
+		nlohmann::json& jti() { return any("jti"); }
 	private:
 		json *_claims;
 	};
@@ -299,14 +299,14 @@ private:
 	public:
 		explicit set(json *c) : _claims(c) {}
 	public:
-		void any(const std::string &key, const std::string &value);
-		void iss(const std::string &value) { any("iss", value); }
-		void sub(const std::string &value) { any("sub", value); }
-		void aud(const std::string &value) { any("aud", value); }
-		void exp(const std::string &value) { any("exp", value); }
-		void nbf(const std::string &value) { any("nbf", value); }
-		void iat(const std::string &value) { any("iat", value); }
-		void jti(const std::string &value) { any("jti", value); }
+		void any(const std::string &key, const nlohmann::json &value);
+		void iss(const nlohmann::json &value) { any("iss", value); }
+		void sub(const nlohmann::json &value) { any("sub", value); }
+		void aud(const nlohmann::json &value) { any("aud", value); }
+		void exp(const nlohmann::json &value) { any("exp", value); }
+		void nbf(const nlohmann::json &value) { any("nbf", value); }
+		void iat(const nlohmann::json &value) { any("iat", value); }
+		void jti(const nlohmann::json &value) { any("jti", value); }
 
 	private:
 		json *_claims;

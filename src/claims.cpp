@@ -26,8 +26,8 @@
 
 namespace jwtpp {
 
-void claims::set::any(const std::string &key, const std::string &value) {
-	if (key.empty() || value.empty())
+void claims::set::any(const std::string &key, const nlohmann::json &value) {
+	if (key.empty() || value.empty() || (value.is_string() && value.get<std::string>().empty()))
 		throw std::invalid_argument("Invalid params");
 
 	_claims->operator[](key) = value;
