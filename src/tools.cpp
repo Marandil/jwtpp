@@ -27,8 +27,7 @@
 namespace jwtpp {
 
 std::string marshal(const nlohmann::json &json) {
-	std::string out = json.dump();
-	return out;
+	return json.dump();
 }
 
 std::string marshal_b64(const nlohmann::json &json) {
@@ -37,14 +36,11 @@ std::string marshal_b64(const nlohmann::json &json) {
 }
 
 nlohmann::json unmarshal(const std::string &in) {
-	nlohmann::json j;
-	std::stringstream(in) >> j;
-	return j;
+	return nlohmann::json::parse(in);
 }
 
 nlohmann::json unmarshal_b64(const std::string &b64) {
-	std::string decoded;
-	decoded = b64::decode(b64);
+	std::string decoded = b64::decode(b64);
 	return unmarshal(decoded);
 }
 
